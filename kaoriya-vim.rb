@@ -15,6 +15,9 @@ class KaoriyaVim < Formula
 
   depends_on "gettext"
 
+  conflicts_with "macvim"
+  conflicts_with "vim"
+
   test do
     system "false"
   end
