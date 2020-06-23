@@ -1,0 +1,13 @@
+name: test
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  audit:
+    name: audit formula
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: brew audit --strict ./kaoriya-vim.rb
