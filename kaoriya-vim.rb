@@ -54,8 +54,8 @@ class KaoriyaVim < Formula
     # in vim-kaoriya/vim
     cd "vim" do
       ENV["LUA_PREFIX"] = HOMEBREW_PREFIX
-      ENV["CFLAGS"] = "-I#{opt_prefix/"gettext/include"}"
-      ENV["LDFLAGS"] = "-L#{opt_prefix/"gettext/lib"}"
+      ENV["CFLAGS"] = "-I#{HOMEBREW_PREFIX/"opt/gettext/include"}"
+      ENV["LDFLAGS"] = "-L#{HOMEBREW_PREFIX/"opt/gettext/lib"}"
 
       params = %W[
         --prefix=#{prefix}
