@@ -95,6 +95,15 @@ class KaoriyaVim < Formula
       inreplace "Makefile", /\broot\b/, user
       system "make", "VIM_DIR=#{share/"vim"}", "kaoriya-install"
     end
+
+    # kaoriya-vim/share/vim/plugins
+    cd share/"vim/plugins" do
+      mkdir_p "vimdoc-ja"
+      # without dot files and dirs
+      Dir.glob(buildpath/"contrib/vimdoc-ja/*") do |file|
+        cp_r file, "vimdoc-ja"
+      end
+    end
   end
 
   def get_dylib_versions(version)
@@ -118,5 +127,7 @@ class KaoriyaVim < Formula
     end
 
     system bin/"vim", "--version"
+
+    assert_predicate share/"vim/plugins/vimdoc-ja", :exist?
   end
 end
