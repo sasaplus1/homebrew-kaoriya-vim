@@ -116,6 +116,6 @@ class KaoriyaVim < Formula
       printf "\t%s (compatibility version %s, current version %s)\n", command.name, compat, current
     end
 
-    system "vim", "--version"
+    system bin/"vim", "--version"
   end
 end
