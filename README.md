@@ -20,6 +20,7 @@ my KaoriYa Vim for [Homebrew](https://brew.sh/)
 - [Homebrew Documentation](https://docs.brew.sh/)
 - [Formula Cookbook](https://github.com/Homebrew/brew/blob/master/docs/Formula-Cookbook.md)
 - [Documentation for Homebrew/brew](https://www.rubydoc.info/github/Homebrew/brew/index)
+- https://github.com/Homebrew/homebrew-core
 
 ## License
 
