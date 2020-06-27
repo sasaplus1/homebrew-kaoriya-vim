@@ -7,7 +7,6 @@ class KaoriyaVim < Formula
 
   depends_on "autoconf" => :build
   depends_on "coreutils" => :build
-  depends_on "gnu-sed" => :build
   depends_on "lua@5.1" => :build
   depends_on "luajit" => :build
   depends_on "make" => :build
@@ -17,6 +16,84 @@ class KaoriyaVim < Formula
 
   conflicts_with "macvim"
   conflicts_with "vim"
+
+  resource "guilt" do
+    # NOTE: default branch name is edge
+    url "https://github.com/koron/guilt.git", :branch => "edge"
+  end
+
+  def install
+    resource("guilt").stage do
+      inreplace "guilt", /\breadlink\b/, "greadlink"
+      system "make", "PREFIX=#{buildpath}/guilt", "install"
+    end
+
+    ENV.prepend_create_path "PATH", "#{buildpath}/guilt/bin"
+
+    vim_version = `printf -- '%b' 'all:\n\t@printf -- $(VIM_VER)' | make -f VERSION -f -`
+
+    # in vim-kaoriya/vim
+    cd "vim" do
+      system "git", "checkout", "-b", "v#{vim_version}"
+      system "git", "config", "--local", "guilt.patchesdir", "../patches"
+      system "guilt", "init"
+    end
+
+    # in vim-kaoriya/patches
+    cd "patches" do
+      Dir.glob("master/*") do |file|
+        cp file, "v#{vim_version}"
+      end
+    end
+
+    # in vim-kaoriya/vim/src
+    cd "vim/src" do
+      system "guilt", "push", "--all"
+    end
+
+    # in vim-kaoriya/vim
+    cd "vim" do
+      ENV["LUA_PREFIX"] = HOMEBREW_PREFIX
+      ENV["CFLAGS"] = "-I#{opt_prefix/"gettext/include"}"
+      ENV["LDFLAGS"] = "-L#{opt_prefix/"gettext/lib"}"
+
+      params = %W[
+        --prefix=#{prefix}
+        --enable-fail-if-missing
+        --disable-smack
+        --disable-selinux
+        --disable-xsmp
+        --disable-xsmp-interact
+        --enable-luainterp=dynamic
+        --enable-pythoninterp=dynamic
+        --enable-python3interp=dynamic
+        --enable-cscope
+        --disable-netbeans
+        --enable-terminal
+        --enable-multibyte
+        --disable-rightleft
+        --disable-arabic
+        --enable-gui=no
+        --with-compiledby=sasa+1
+        --with-features=huge
+        --with-luajit
+        --without-x
+        --with-tlib=ncurses
+      ]
+
+      system "./configure", *params
+      system "make", "DATADIR=#{share}"
+      system "make", "install"
+    end
+
+    # in vim-kaoriya/build/freebsd
+    cd "build/freebsd" do
+      user = `printf -- '%b' "$(whoami)"`
+
+      inreplace "Makefile", /\broot\b/, user
+      system "make", "VIM_DIR=#{share/"vim"}", "kaoriya-install"
+    end
+  end
 
   test do
     system "false"
