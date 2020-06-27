@@ -1,9 +1,4 @@
-require 'macho'
-
-def get_dylib_versions(version)
-  # https://stackoverflow.com/a/14796228
-  { major: version >> 16, minor: (version >> 8) & 0xff, patch: (version & 0xff) }
-end
+require "macho"
 
 class KaoriyaVim < Formula
   desc "KaoriYa Vim"
@@ -102,6 +97,11 @@ class KaoriyaVim < Formula
     end
   end
 
+  def get_dylib_versions(version)
+    # https://stackoverflow.com/a/14796228
+    { "major" => version >> 16, "minor" => (version >> 8) & 0xff, "patch" => (version & 0xff) }
+  end
+
   test do
     # NOTE: brew audit says: `Use ruby-macho instead of calling "otool"`
     # system "otool", "-L", "#{bin/"vim"}"
@@ -110,10 +110,11 @@ class KaoriyaVim < Formula
     printf "#{file.filename}:\n"
 
     file.dylib_load_commands.each do |command|
-      compat = get_versions(command.compatibility_version).values.join('.')
-      current = get_versions(command.current_version).values.join('.')
+      compat = get_dylib_versions(command.compatibility_version).values.join(".")
+      current = get_dylib_versions(command.current_version).values.join(".")
 
-      printf "\t%s (compatibility version %s, current version %s)\n", command.name, compat, current
+      printf "\t%<name>s (compatibility version %<compat>s, current version %<current>s)\n",
+        :name => command.name, :compat => compat, :current => current
     end
 
     system bin/"vim", "--version"
