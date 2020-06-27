@@ -10,3 +10,7 @@ jobs:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
+      # NOTE: clean install Homebrew, It fixes /usr permissions.
+      - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+      - run: brew install --debug --verbose ./kaoriya-vim.rb
+      - run: brew test --debug --verbose ./kaoriya-vim.rb
