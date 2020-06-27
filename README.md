@@ -5,6 +5,22 @@
 
 my KaoriYa Vim for [Homebrew](https://brew.sh/)
 
+## Related
+
+### Vim
+
+- https://github.com/vim/vim
+- https://github.com/koron/vim-kaoriya
+- https://github.com/splhack/macvim-kaoriya
+- https://github.com/sasaplus1/kaoriya-vim
+
+### Homebrew
+
+- [Homebrew](https://brew.sh/)
+- [Homebrew Documentation](https://docs.brew.sh/)
+- [Formula Cookbook](https://github.com/Homebrew/brew/blob/master/docs/Formula-Cookbook.md)
+- [Documentation for Homebrew/brew](https://www.rubydoc.info/github/Homebrew/brew/index)
+
 ## License
 
 The MIT license.
