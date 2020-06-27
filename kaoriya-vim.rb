@@ -96,6 +96,7 @@ class KaoriyaVim < Formula
   end
 
   test do
-    system "false"
+    system "otool", "-L", "#{bin/"vim"}"
+    system "vim", "--version"
   end
 end
