@@ -17,3 +17,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gems-
       - run: brew audit --strict ./kaoriya-vim.rb
+  install-and-test:
+    name: install and test
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: gem install ruby-macho
+      # NOTE: clean install Homebrew, It fixes /usr permissions.
+      - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+      - run: brew install --debug --verbose ./kaoriya-vim.rb
+      - run: brew test --debug --verbose ./kaoriya-vim.rb

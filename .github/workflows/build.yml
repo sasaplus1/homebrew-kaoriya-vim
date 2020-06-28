@@ -1,17 +1,27 @@
 name: build
 
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build:
-    name: build
+    name: build bottle
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
-      - run: gem install ruby-macho
       # NOTE: clean install Homebrew, It fixes /usr permissions.
       - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-      - run: brew install --debug --verbose ./kaoriya-vim.rb
-      - run: brew test --debug --verbose ./kaoriya-vim.rb
+      - run: brew tap sasaplus1/kaoriya-vim
+      - run: brew install --build-bottle --debug --verbose kaoriya-vim
+      - run: brew bottle --debug --verbose kaoriya-vim
+      - id: bottle
+        run: echo "::set-output name=name::$(ls -1 kaoriya-vim--*.bottle.tar.gz)"
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.bottle.outputs.name }}
+          path: ${{ steps.bottle.outputs.name }}
