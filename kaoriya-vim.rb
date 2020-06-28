@@ -1,4 +1,4 @@
-require "macho"
+require "macho" if OS.mac?
 
 class KaoriyaVim < Formula
   desc "KaoriYa Vim"
@@ -50,6 +50,11 @@ class KaoriyaVim < Formula
 
     # in vim-kaoriya/vim/src
     cd "vim/src" do
+      if OS.linux?
+        system "git", "config", "user.name", "sasaplus1"
+        system "git", "config", "user.email", "<>"
+      end
+
       system "guilt", "push", "--all"
     end
 
@@ -67,7 +72,6 @@ class KaoriyaVim < Formula
         --disable-xsmp
         --disable-xsmp-interact
         --enable-luainterp=dynamic
-        --enable-pythoninterp=dynamic
         --enable-python3interp=dynamic
         --enable-cscope
         --disable-netbeans
@@ -88,12 +92,27 @@ class KaoriyaVim < Formula
       system "make", "install"
     end
 
-    # in vim-kaoriya/build/freebsd
-    cd "build/freebsd" do
-      user = `printf -- '%b' "$(whoami)"`
+    if OS.mac?
+      # in vim-kaoriya/build/freebsd
+      cd "build/freebsd" do
+        user = `printf -- '%b' "$(whoami)"`
 
-      inreplace "Makefile", /\broot\b/, user
-      system "make", "VIM_DIR=#{share/"vim"}", "kaoriya-install"
+        inreplace "Makefile", /\broot\b/, user
+        system "make", "VIM_DIR=#{share/"vim"}", "kaoriya-install"
+      end
+    else
+      # in vim-kaoriya/build/xubuntu
+      cd "build/xubuntu" do
+        user = `printf -- '%b' "$(whoami)"`
+        group = `printf -- '%b' "$(groups | awk '{ print $1 }')"`
+
+        inreplace "Makefile" do |s|
+          s.gsub!("-o root", "-o #{user}")
+          s.gsub!("-g root", "-g #{group}")
+        end
+
+        system "make", "VIM_DIR=#{share/"vim"}", "kaoriya-install"
+      end
     end
 
     # kaoriya-vim/share/vim/plugins
@@ -112,18 +131,23 @@ class KaoriyaVim < Formula
   end
 
   test do
-    # NOTE: brew audit says: `Use ruby-macho instead of calling "otool"`
-    # system "otool", "-L", "#{bin/"vim"}"
-    file = MachO::MachOFile.new(bin/"vim")
+    if OS.mac?
+      # NOTE: brew audit says: `Use ruby-macho instead of calling "otool"`
+      # system "otool", "-L", "#{bin/"vim"}"
+      file = MachO::MachOFile.new(bin/"vim")
 
-    printf "#{file.filename}:\n"
+      printf "#{file.filename}:\n"
 
-    file.dylib_load_commands.each do |command|
-      compat = get_dylib_versions(command.compatibility_version).values.join(".")
-      current = get_dylib_versions(command.current_version).values.join(".")
+      file.dylib_load_commands.each do |command|
+        compat = get_dylib_versions(command.compatibility_version).values.join(".")
+        current = get_dylib_versions(command.current_version).values.join(".")
 
-      printf "\t%<name>s (compatibility version %<compat>s, current version %<current>s)\n",
-        :name => command.name, :compat => compat, :current => current
+        printf "\t%<name>s (compatibility version %<compat>s, current version %<current>s)\n",
+          :name => command.name, :compat => compat, :current => current
+      end
+    else
+      # others, maybe linux
+      system "ldd", bin/"vim"
     end
 
     system bin/"vim", "--version"
