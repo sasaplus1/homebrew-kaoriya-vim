@@ -98,27 +98,17 @@ class KaoriyaVim < Formula
       system "make", "install"
     end
 
-    if OS.mac?
-      # in vim-kaoriya/build/freebsd
-      cd "build/freebsd" do
-        user = `printf -- '%b' "$(whoami)"`
+    # cd to vim-kaoriya/build/freebsd if macOS, otherwise cd to vim-kaoriya/build/xubuntu
+    cd OS.mac? ? "build/freebsd" : "build/xubuntu" do
+      user = `printf -- '%b' "$(whoami)"`
+      group = `printf -- '%b' "$(groups | awk '{ print $1 }')"`
 
-        inreplace "Makefile", /\broot\b/, user
-        system "make", "VIM_DIR=#{share/"vim"}", "kaoriya-install"
+      inreplace "Makefile" do |s|
+        s.gsub!("-o root", "-o #{user}")
+        s.gsub!(/-g (?:root|wheel)/, "-g #{group}")
       end
-    else
-      # in vim-kaoriya/build/xubuntu
-      cd "build/xubuntu" do
-        user = `printf -- '%b' "$(whoami)"`
-        group = `printf -- '%b' "$(groups | awk '{ print $1 }')"`
 
-        inreplace "Makefile" do |s|
-          s.gsub!("-o root", "-o #{user}")
-          s.gsub!("-g root", "-g #{group}")
-        end
-
-        system "make", "VIM_DIR=#{share/"vim"}", "kaoriya-install"
-      end
+      system "make", "VIM_DIR=#{share/"vim"}", "kaoriya-install"
     end
 
     # kaoriya-vim/share/vim/plugins
