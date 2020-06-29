@@ -1,0 +1,18 @@
+os: osx
+
+language: c
+
+compiler: clang
+
+git:
+  depth: 1
+
+jobs:
+  include:
+    - osx_image: xcode11.3
+
+script:
+  - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  - brew tap sasaplus1/kaoriya-vim
+  - brew install --build-bottle --debug --verbose kaoriya-vim
+  - brew bottle --debug --verbose kaoriya-vim
