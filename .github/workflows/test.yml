@@ -19,10 +19,20 @@ jobs:
       - run: brew audit --strict ./kaoriya-vim.rb
   install-and-test:
     name: install and test
-    runs-on: macOS-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macOS-latest
+          - ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6
       - run: gem install ruby-macho
+        if: matrix.os == 'macOS-latest'
       # NOTE: clean install Homebrew, It fixes /usr permissions.
       - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
       - run: brew install --debug --verbose ./kaoriya-vim.rb
