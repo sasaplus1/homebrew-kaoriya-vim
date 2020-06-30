@@ -12,14 +12,13 @@ jobs:
     - osx_image: xcode11.3
 
 before_script:
+  - id
   - whoami
   - groups
+  - cat /etc/group
 
 script:
   - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   - brew tap sasaplus1/kaoriya-vim
   - brew install --build-bottle --verbose kaoriya-vim
   - brew bottle --verbose kaoriya-vim
-
-after_script:
-  - cat build/freebsd/Makefile
