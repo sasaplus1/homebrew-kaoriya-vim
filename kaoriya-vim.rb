@@ -98,8 +98,10 @@ class KaoriyaVim < Formula
       system "make", "install"
     end
 
+    build_dir = OS.mac? ? "build/freebsd" : "build/xubuntu"
+
     # cd to vim-kaoriya/build/freebsd if macOS, otherwise cd to vim-kaoriya/build/xubuntu
-    cd OS.mac? ? "build/freebsd" : "build/xubuntu" do
+    cd build_dir do
       user = `printf -- '%b' "$(whoami)"`
       group = `printf -- '%b' "$(groups | awk '{ print $1 }')"`
 
