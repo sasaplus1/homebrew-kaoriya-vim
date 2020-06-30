@@ -18,8 +18,8 @@ before_script:
 script:
   - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   - brew tap sasaplus1/kaoriya-vim
-  - brew install --build-bottle --debug --verbose kaoriya-vim
-  - brew bottle --debug --verbose kaoriya-vim
+  - brew install --build-bottle --verbose kaoriya-vim
+  - brew bottle --verbose kaoriya-vim
 
 after_script:
   - cat build/freebsd/Makefile
