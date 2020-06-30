@@ -20,3 +20,6 @@ script:
   - brew tap sasaplus1/kaoriya-vim
   - brew install --build-bottle --debug --verbose kaoriya-vim
   - brew bottle --debug --verbose kaoriya-vim
+
+after_script:
+  - cat build/freebsd/Makefile
