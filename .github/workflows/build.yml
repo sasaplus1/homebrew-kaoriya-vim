@@ -27,7 +27,12 @@ jobs:
       - run: brew bottle --debug --verbose kaoriya-vim
       - id: bottle
         run: echo "::set-output name=name::$(ls -1 kaoriya-vim--*.bottle.tar.gz)"
+      - run: shasum -a 256 -b "${{ steps.bottle.outputs.name }}" > "${{ steps.bottle.outputs.name }}"-sha256sum.txt
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.bottle.outputs.name }}
           path: ${{ steps.bottle.outputs.name }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.bottle.outputs.name }}-sha256sum.txt
+          path: ${{ steps.bottle.outputs.name }}-sha256sum.txt
