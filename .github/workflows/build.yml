@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - '*'
   pull_request:
     branches:
       - master
@@ -36,3 +38,50 @@ jobs:
         with:
           name: ${{ steps.bottle.outputs.name }}-sha256sum.txt
           path: ${{ steps.bottle.outputs.name }}-sha256sum.txt
+  release:
+    name: release bottles
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    if: startsWith(github.ref, 'refs/tags')
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: artifacts
+      - run: cat artifacts/*-sha256sum.txt | tee artifacts/sha256sum.txt
+      - run: rm artifacts/*-sha256sum.txt
+      # output filename,filesize
+      - run: stat -c '%n,%s' ./artifacts/* > files.txt
+      # output mimetype
+      - run: file -b --mime-type ./artifacts/* > mime-types.txt
+      # output filename,filesize,mimetype
+      - run: paste -d , files.txt mime-types.txt > ./artifacts.txt
+      - id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - uses: actions/github-script@v2
+        with:
+          script: |
+            const fs = require('fs');
+            const data = fs.readFileSync('./artifacts.txt', 'utf8');
+            const files = data.split('\n');
+
+            return Promise.all(
+              files.map(function(file) {
+                const [name, size, type] = file;
+
+                return github.repos.uploadReleaseAsset({
+                  url: '${{ steps.create_release.outputs.upload_url }}',
+                  headers: {
+                    'content-length': size,
+                    'content-type': type 
+                  },
+                  name: name,
+                  file: fs.readFileSync(name)
+                });
+              });
+            );
