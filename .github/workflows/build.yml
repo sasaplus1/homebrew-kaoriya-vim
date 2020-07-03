@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v2
         with:
-          name: artifacts
+          path: artifacts
       - run: cat artifacts/*-sha256sum.txt | tee artifacts/sha256sum.txt
       - run: rm artifacts/*-sha256sum.txt
       # output filename,filesize
