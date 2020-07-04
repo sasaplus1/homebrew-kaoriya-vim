@@ -8,7 +8,7 @@ class KaoriyaVim < Formula
   head "https://github.com/koron/vim-kaoriya.git", :branch => "develop"
 
   bottle do
-    root_url "https://github.com/sasaplus1/homebrew-kaoriya-vim/releases/download/8.2.0087/"
+    root_url "https://github.com/sasaplus1/homebrew-kaoriya-vim/releases/download/8.2.0087"
     sha256 "a0feddd25524bcbd5a635d5b2e09aa4c1edb7683f01287d6aec0dc9d8fb55ca9" => :catalina
     sha256 "934539d3899febd28b43057cc66312bd9a28050b81bfe7520b24ae98b094bdc2" => :x86_64_linux
   end
