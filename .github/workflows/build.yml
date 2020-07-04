@@ -20,13 +20,24 @@ jobs:
       - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
       - run: brew tap sasaplus1/kaoriya-vim
       - run: brew install --build-bottle --verbose kaoriya-vim
-      - run: brew bottle --json --verbose kaoriya-vim
+      - run: >
+          brew bottle
+          --json
+          --root-url 'https://github.com/sasaplus1/homebrew-kaoriya-vim/releases/download/8.2.0087'
+          --verbose
+          kaoriya-vim
       - id: bottle
         run: echo "::set-output name=name::$(ls -1 kaoriya-vim--*.bottle.tar.gz)"
+      - id: config
+        run: echo "::set-output name=name::$(ls -1 kaoriya-vim--*.bottle.json)"
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.bottle.outputs.name }}
           path: ${{ steps.bottle.outputs.name }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.config.outputs.name }}
+          path: ${{ steps.config.outputs.name }}
   release:
     name: release bottles
     runs-on: ubuntu-latest
@@ -72,6 +83,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./kaoriya-vim--8.2.0087.catalina.bottle.json
+          asset_name: kaoriya-vim--8.2.0087.catalina.bottle.json
+          asset_content_type: application/json
+      - uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./kaoriya-vim--8.2.0087.x86_64_linux.bottle.tar.gz
           asset_name: kaoriya-vim--8.2.0087.x86_64_linux.bottle.tar.gz
           asset_content_type: application/gzip
+      - uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./kaoriya-vim--8.2.0087.x86_64_linux.bottle.json
+          asset_name: kaoriya-vim--8.2.0087.x86_64_linux.bottle.json
+          asset_content_type: application/json
