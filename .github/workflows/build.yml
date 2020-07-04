@@ -81,5 +81,5 @@ jobs:
                   name: name,
                   file: fs.readFileSync(name)
                 });
-              });
+              })
             );
