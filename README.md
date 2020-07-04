@@ -5,6 +5,13 @@
 
 my KaoriYa Vim for [Homebrew](https://brew.sh/)
 
+## Install
+
+```console
+$ brew tap sasaplus1/kaoriya-vim
+$ brew install kaoriya-vim
+```
+
 ## Related
 
 ### Vim
