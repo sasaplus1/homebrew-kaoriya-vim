@@ -26,7 +26,7 @@ jobs:
       - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
       - run: brew tap sasaplus1/kaoriya-vim
       - run: brew install --build-bottle --verbose kaoriya-vim
-      - run: brew bottle --verbose kaoriya-vim
+      - run: brew bottle --json --verbose kaoriya-vim
       - id: bottle
         run: echo "::set-output name=name::$(ls -1 kaoriya-vim--*.bottle.tar.gz)"
       - uses: actions/upload-artifact@v2
