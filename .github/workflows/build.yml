@@ -29,15 +29,10 @@ jobs:
       - run: brew bottle --debug --verbose kaoriya-vim
       - id: bottle
         run: echo "::set-output name=name::$(ls -1 kaoriya-vim--*.bottle.tar.gz)"
-      - run: shasum -a 256 -b "${{ steps.bottle.outputs.name }}" > "${{ steps.bottle.outputs.name }}"-sha256sum.txt
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.bottle.outputs.name }}
           path: ${{ steps.bottle.outputs.name }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ steps.bottle.outputs.name }}-sha256sum.txt
-          path: ${{ steps.bottle.outputs.name }}-sha256sum.txt
   release:
     name: release bottles
     runs-on: ubuntu-latest
@@ -48,14 +43,15 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           path: artifacts
-      - run: cat artifacts/*-sha256sum.txt | tee artifacts/sha256sum.txt
-      - run: rm artifacts/*-sha256sum.txt
+      - run: mkdir -p bottles
+      - run: find artifacts -type f -print0 | xargs -0 mv -t bottles
+      - run: shasum -a 256 -b bottles/* | tee bottles/sha256sum.txt
       # output filename,filesize
-      - run: stat -c '%n,%s' ./artifacts/* > files.txt
+      - run: stat -c '%n,%s' ./bottles/* > files.txt
       # output mimetype
-      - run: file -b --mime-type ./artifacts/* > mime-types.txt
+      - run: file -b --mime-type ./bottles/* > mime-types.txt
       # output filename,filesize,mimetype
-      - run: paste -d , files.txt mime-types.txt > ./artifacts.txt
+      - run: paste -d , files.txt mime-types.txt > ./bottles.txt
       - id: create_release
         uses: actions/create-release@v1
         with:
@@ -67,7 +63,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const data = fs.readFileSync('./artifacts.txt', 'utf8');
+            const data = fs.readFileSync('./bottles.txt', 'utf8');
             const files = data.split('\n');
 
             return Promise.all(
