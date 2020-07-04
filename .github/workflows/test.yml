@@ -35,5 +35,5 @@ jobs:
         if: matrix.os == 'macOS-latest'
       # NOTE: clean install Homebrew, It fixes /usr permissions.
       - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-      - run: brew install --verbose ./kaoriya-vim.rb
+      - run: brew install --build-from-source --verbose ./kaoriya-vim.rb
       - run: brew test --verbose ./kaoriya-vim.rb
