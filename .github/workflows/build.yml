@@ -44,14 +44,14 @@ jobs:
         with:
           path: artifacts
       - run: mkdir -p bottles
-      - run: find artifacts -type f -print0 | xargs -0 mv -t bottles
-      - run: shasum -a 256 -b bottles/* | tee bottles/sha256sum.txt
+      - run: find artifacts -type f -print0 | xargs -0 mv -t .
+      - run: shasum -a 256 -b *.tar.gz | tee sha256sum.txt
       # output filename,filesize
-      - run: stat -c '%n,%s' ./bottles/* > files.txt
+      - run: stat -c '%n,%s' *.tar.gz sha256sum.txt | tee files.txt
       # output mimetype
-      - run: file -b --mime-type ./bottles/* > mime-types.txt
+      - run: file -b --mime-type *.tar.gz sha256sum.txt | tee mime-types.txt
       # output filename,filesize,mimetype
-      - run: paste -d , files.txt mime-types.txt > ./bottles.txt
+      - run: paste -d , files.txt mime-types.txt | tee bottles.txt
       - id: create_release
         uses: actions/create-release@v1
         with:
