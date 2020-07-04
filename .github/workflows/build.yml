@@ -79,7 +79,7 @@ jobs:
                     'content-type': type 
                   },
                   name: name,
-                  file: fs.readFileSync(name)
+                  file: fs.readFileSync(`./${name}`)
                 });
               })
             );
