@@ -70,7 +70,7 @@ jobs:
 
             return Promise.all(
               files.map(function(file) {
-                const [name, size, type] = file;
+                const [name, size, type] = file.split(',');
 
                 return github.repos.uploadReleaseAsset({
                   url: '${{ steps.create_release.outputs.upload_url }}',
