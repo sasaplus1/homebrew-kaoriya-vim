@@ -59,6 +59,8 @@ jobs:
           release_name: ${{ github.ref }}
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/github-script@v2
         with:
           script: |
