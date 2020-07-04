@@ -43,43 +43,41 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           path: artifacts
-      - run: mkdir -p bottles
       - run: find artifacts -type f -print0 | xargs -0 mv -t .
+      - run: rm -rf artifacts
+      - run: ls -l
       - run: shasum -a 256 -b *.tar.gz | tee sha256sum.txt
-      # output filename,filesize
-      - run: stat -c '%n,%s' *.tar.gz sha256sum.txt | tee files.txt
-      # output mimetype
-      - run: file -b --mime-type *.tar.gz sha256sum.txt | tee mime-types.txt
-      # output filename,filesize,mimetype
-      - run: paste -d , files.txt mime-types.txt | tee bottles.txt
+      - run: file -b --mime-type *.tar.gz sha256sum.txt
       - id: create_release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           draft: false
           prerelease: false
+      - uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/github-script@v2
         with:
-          script: |
-            const fs = require('fs');
-            const data = fs.readFileSync('./bottles.txt', 'utf8');
-            const files = data.split('\n');
-
-            return Promise.all(
-              files.map(function(file) {
-                const [name, size, type] = file.split(',');
-
-                return github.repos.uploadReleaseAsset({
-                  url: '${{ steps.create_release.outputs.upload_url }}',
-                  headers: {
-                    'content-length': size,
-                    'content-type': type 
-                  },
-                  name: name,
-                  file: fs.readFileSync(`./${name}`)
-                });
-              })
-            );
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./sha256sum.txt
+          asset_name: sha256sum.txt
+          asset_content_type: text/plain
+      - uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./kaoriya-vim--8.2.0087.catalina.bottle.tar.gz
+          asset_name: kaoriya-vim--8.2.0087.catalina.bottle.tar.gz
+          asset_content_type: application/gzip
+      - uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./kaoriya-vim--8.2.0087.x86_64_linux.bottle.tar.gz
+          asset_name: kaoriya-vim--8.2.0087.x86_64_linux.bottle.tar.gz
+          asset_content_type: application/gzip
