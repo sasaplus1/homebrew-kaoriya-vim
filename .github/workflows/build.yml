@@ -47,7 +47,7 @@ jobs:
       - run: rm -rf artifacts
       - run: ls -l
       - run: shasum -a 256 -b *.tar.gz | tee sha256sum.txt
-      - run: file -b --mime-type *.tar.gz sha256sum.txt
+      - run: file --mime-type *.tar.gz sha256sum.txt
       - id: create_release
         uses: actions/create-release@v1
         env:
