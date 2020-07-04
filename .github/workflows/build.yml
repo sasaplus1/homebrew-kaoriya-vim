@@ -25,8 +25,8 @@ jobs:
       # NOTE: clean install Homebrew, It fixes /usr permissions.
       - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
       - run: brew tap sasaplus1/kaoriya-vim
-      - run: brew install --build-bottle --debug --verbose kaoriya-vim
-      - run: brew bottle --debug --verbose kaoriya-vim
+      - run: brew install --build-bottle --verbose kaoriya-vim
+      - run: brew bottle --json --verbose kaoriya-vim
       - id: bottle
         run: echo "::set-output name=name::$(ls -1 kaoriya-vim--*.bottle.tar.gz)"
       - uses: actions/upload-artifact@v2
@@ -47,7 +47,7 @@ jobs:
       - run: rm -rf artifacts
       - run: ls -l
       - run: shasum -a 256 -b *.tar.gz | tee sha256sum.txt
-      - run: file -b --mime-type *.tar.gz sha256sum.txt
+      - run: file --mime-type *.tar.gz sha256sum.txt
       - id: create_release
         uses: actions/create-release@v1
         env:
