@@ -9,8 +9,8 @@ class KaoriyaVim < Formula
 
   bottle do
     root_url "https://github.com/sasaplus1/homebrew-kaoriya-vim/releases/download/8.2.0087"
-    sha256 "a0feddd25524bcbd5a635d5b2e09aa4c1edb7683f01287d6aec0dc9d8fb55ca9" => :catalina
-    sha256 "934539d3899febd28b43057cc66312bd9a28050b81bfe7520b24ae98b094bdc2" => :x86_64_linux
+    sha256 "d27a762f1083539730431e021e70bc369c9188a38ef835e4df43645eaf1393c4" => :catalina
+    sha256 "fcb0e8051847215067c09078685439d95a2f50b9fe79096e7f2850f9a61b7e91" => :x86_64_linux
   end
 
   depends_on "autoconf" => :build
