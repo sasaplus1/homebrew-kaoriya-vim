@@ -57,3 +57,14 @@ jobs:
       # NOTE: clean install Homebrew, It fixes /usr permissions.
       - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
       - run: brew install --force-bottle --verbose ./kaoriya-vim.rb
+  test-bot:
+    name: test with test-bot
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      # NOTE: clean install Homebrew, It fixes /usr permissions.
+      - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+      - run: brew test-bot --verbose ./kaoriya-vim.rb
