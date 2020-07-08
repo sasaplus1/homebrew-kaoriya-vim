@@ -8,63 +8,15 @@ on:
     - cron: '45 23 * * 1'
 
 jobs:
-  audit:
-    name: audit formula
-    runs-on: macOS-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: /usr/local/Homebrew/Library/Homebrew/vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-      - run: brew audit --strict ./kaoriya-vim.rb
-  install-and-test:
-    name: install and test
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - macOS-latest
-          - ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - run: gem install ruby-macho
-        if: matrix.os == 'macOS-latest'
-      # NOTE: clean install Homebrew, It fixes /usr permissions.
-      - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-      - run: brew install --build-from-source --verbose ./kaoriya-vim.rb
-      - run: brew test --verbose ./kaoriya-vim.rb
-  install-and-test-for-bottle:
-    name: install and test for bottle
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - macOS-latest
-          - ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      # NOTE: clean install Homebrew, It fixes /usr permissions.
-      - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-      - run: brew install --force-bottle --verbose ./kaoriya-vim.rb
   test-bot:
     name: test with test-bot
-    runs-on: macOS-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macOS-latest
+          - ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      # NOTE: clean install Homebrew, It fixes /usr permissions.
-      - run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
       - run: brew test-bot --verbose ./kaoriya-vim.rb
