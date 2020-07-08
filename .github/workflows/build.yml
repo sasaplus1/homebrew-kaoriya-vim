@@ -1,8 +1,11 @@
 name: build
 
 on:
-  - push
-  - pull_request
+  push:
+  pull_request:
+  schedule:
+    # NOTE: at AM8:45 every monday by JST
+    - cron: '45 23 * * 1'
 
 jobs:
   build:
