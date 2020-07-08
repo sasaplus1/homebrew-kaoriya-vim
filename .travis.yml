@@ -19,5 +19,5 @@ before_script:
 
 script:
   - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-  - brew install --build-from-source --verbose ./kaoriya-vim
-  - brew test --verbose ./kaoriya-vim
+  - brew install --build-from-source --verbose ./kaoriya-vim.rb
+  - brew test --verbose ./kaoriya-vim.rb
